@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" href="estilo.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff69b4">
+
+    <title>Registro de Gastos</title>
+</head>
+<body>
+
+<h1>Registro de Gastos</h1>
+
+<form>
+    <label>Data:</label><br>
+    <input type="date" id="dataGasto"><br><br>
+
+    <label>Categoria:</label><br>
+    <select id="categoria">
+        <option>Comida</option>
+        <option>Transporte</option>
+        <option>Produtos de limpeza</option>
+        <option>Outros</option>
+    </select><br><br>
+
+    <label>Descrição:</label><br>
+    <input type="text" id="descricao"><br><br>
+
+    <label>Valor:</label><br>
+    <input type="number" id="valorGasto"><br><br>
+
+    <button type="button" onclick="salvarGasto()">Salvar gasto</button>
+</form>
+
+<button onclick="logout()">Sair</button>
+
+<script>
+function logout() {
+    localStorage.removeItem("logado");
+    window.location.href = "login.html";
+}
+</script>
+
+<script>
+function salvarGasto() {
+    let data = document.getElementById("dataGasto").value;
+    let categoria = document.getElementById("categoria").value;
+    let descricao = document.getElementById("descricao").value;
+    let valor = document.getElementById("valorGasto").value;
+
+    if (!data || !valor) {
+        alert("Preencha os campos obrigatórios!");
+        return;
+    }
+
+    let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
+
+    gastos.push({
+        data: data,
+        categoria: categoria,
+        descricao: descricao,
+        valor: valor
+    });
+
+    localStorage.setItem("gastos", JSON.stringify(gastos));
+
+    alert("Gasto salvo com sucesso!");
+}
+</script>
+
+</body>
+</html>
