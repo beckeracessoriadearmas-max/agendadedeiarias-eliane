@@ -68,3 +68,18 @@ button:hover {
     font-weight: bold;
     margin: 8px 0 0;
 }
+.menu {
+    display: flex;
+    justify-content: space-around;
+    background: #ff69b4;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
