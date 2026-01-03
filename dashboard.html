@@ -2,58 +2,39 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="estilo.css">
-<script>
-if (localStorage.getItem("logado") !== "true") {
-    window.location.href = "login.html";
-}
-</script>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff69b4">
-
   <title>Agenda da Elaine</title>
+
+  <link rel="stylesheet" href="estilo.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff69b4">
 </head>
+
 <body>
 
-<h1>Agenda da Eliane</h1>
+<header>
+  <h1>Agenda da Elaine 💕</h1>
+</header>
 
-<p>Diárias feitas no mês:</p>
-<p>Diárias restantes: </p>
-<p>Total ganho: R$ </p>
+<main>
 
-<a href="nova-diaria.html">
-  <button>➕ Nova Diária</button>
-</a>
+  <section class="resumo">
+    <p id="feitas">Diárias feitas no mês: 0</p>
+    <p id="futuras">Diárias restantes: 0</p>
+    <p id="total">Total ganho: R$ 0,00</p>
+  </section>
 
-<a href="relatorio.html">
-  <button>📊 Relatório</button>
-</a>
+  <section class="acoes">
+    <a href="nova-diaria.html"><button>➕ Nova Diária</button></a>
+    <a href="calendario.html"><button>📅 Calendário</button></a>
+    <a href="gastos.html"><button>💰 Gastos</button></a>
+  </section>
 
-<a href="gastos.html">
-  <button>💰 Gastos</button>
-</a>
-<script>
+</main>
 
+<footer>
+  <button onclick="logout()">Sair</button>
+</footer>
 
-if ("Notification" in window) {
-    Notification.requestPermission();
-}
-
-<button onclick="logout()">Sair</button>
-
-
-function logout() {
-    localStorage.removeItem("logado");
-    window.location.href = "login.html";
-}
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registrado"));
-}
-
-
-</script>
-
+<script src="dashboard.js"></script>
 </body>
 </html>

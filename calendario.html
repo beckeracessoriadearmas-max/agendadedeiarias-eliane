@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Calendário de Diárias</title>
+<link rel="stylesheet" href="estilo.css">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+}
+
+.calendario {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    max-width: 420px;
+}
+
+.dia {
+    padding: 12px;
+    border-radius: 10px;
+    background: #f2f2f2;
+    text-align: center;
+    cursor: pointer;
+}
+
+.tem-diaria {
+    background: #ffb6c1;
+    font-weight: bold;
+}
+
+.hoje {
+    border: 2px solid #ff1493;
+}
+
+#lista {
+    margin-top: 20px;
+    max-width: 420px;
+    background: #fafafa;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.diaria {
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+button {
+    margin-top: 5px;
+    margin-right: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📅 Calendário</h1>
+<h3 id="mesAno"></h3>
+
+<div class="calendario" id="calendario"></div>
+
+<div id="lista">
+    <h3>Diárias do dia</h3>
+    <p>Clique em um dia do calendário</p>
+</div>
+
+<br>
+<a href="dashboard.html"><button>⬅ Voltar</button></a>
+
+<script>
+
+const calendario = document.getElementById("calendario");
+const mesAno = document.getElementById("mesAno");
+const lista = document.getElementById("lista");
+
+let diarias = JSON.parse(localStorage.getItem("diarias")) || [];
+
+const hoje = new Date();
+const ano = hoje.getFullYear();
+const mes = hoje.getMonth();
+
+mesAno.innerText = hoje.toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric"
+});
+
+const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+
+// ================= CALENDÁRIO =================
+for (let dia = 1; dia <= ultimoDia; dia++) {
+    const dataStr = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+
+    const div = document.createElement("div");
+    div.className = "dia";
+    div.innerText = dia;
+
+    if (diarias.some(d => d.data === dataStr)) {
+        div.classList.add("tem-diaria");
+    }
+
+    if (dia === hoje.getDate()) {
+        div.classList.add("hoje");
+    }
+
+    div.onclick = () => mostrarDiarias(dataStr);
+
+    calendario.appendChild(div);
+}
+
+// ================= MOSTRAR DIÁRIAS =================
+function mostrarDiarias(data) {
+    lista.innerHTML = `<h3>Diárias de ${data}</h3>`;
+
+    const doDia = diarias.filter(d => d.data === data);
+
+    if (doDia.length === 0) {
+        lista.innerHTML += "<p>Nenhuma diária nesse dia.</p>";
+        return;
+    }
+
+   doDia.sort((a, b) => a.horario.localeCompare(b.horario));
+forEach((d, index) => {
+        lista.innerHTML += `
+        <div class="diaria">
+            ⏰ ${d.horario}<br>
+            👤 ${d.cliente}<br>
+            📍 ${d.endereco}<br>
+            💰 R$ ${d.valor}<br>
+
+            <button onclick="editarDiaria('${data}', '${d.horario}')">✏️ Editar</button>
+            <button onclick="excluirDiaria('${data}', '${d.horario}')">❌ Excluir</button>
+        </div>
+        `;
+    });
+}
+
+// ================= EXCLUIR =================
+function excluirDiaria(data, horario) {
+    if (!confirm("Deseja excluir esta diária?")) return;
+
+    diarias = diarias.filter(d => !(d.data === data && d.horario === horario));
+    localStorage.setItem("diarias", JSON.stringify(diarias));
+    location.reload();
+}
+
+// ================= EDITAR =================
+function editarDiaria(data, horario) {
+    localStorage.setItem("editarData", data);
+    localStorage.setItem("editarHorario", horario);
+    window.location.href = "nova-diaria.html";
+}
+
+</script>
+
+</body>
+</html>
+
