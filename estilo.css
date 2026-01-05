@@ -83,3 +83,26 @@ button:hover {
     font-weight: bold;
     font-size: 14px;
 }
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    max-width: 600px;
+}
+
+.card {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.card.destaque {
+    background: #ffb6c1;
+}

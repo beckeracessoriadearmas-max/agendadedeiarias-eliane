@@ -1,85 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-	<link rel="stylesheet" href="estilo.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff69b4">
+<meta charset="UTF-8">
+<title>Relatório</title>
+<link rel="stylesheet" href="estilo.css">
 
-    <title>Relatório Mensal</title>
-</head>
-<body>
-
-<h1>Relatório Mensal</h1>
-
-<p id="totalGastos">Total de gastos: R$ 0</p>
-<button onclick="gerarPDF()">Exportar PDF</button>
-
-<a href="dashboard.html">
-    <button>Voltar</button>
-</a>
-
-<script>
-let diarias = JSON.parse(localStorage.getItem("diarias")) || [];
-let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
-
-let totalDiarias = 0;
-let totalGastos = 0;
-
-diarias.forEach(d => {
-    totalDiarias += Number(d.valor);
-});
-
-gastos.forEach(g => {
-    totalGastos += Number(g.valor);
-});
-
-let lucro = totalDiarias - totalGastos;
-
-document.body.innerHTML += `
-<p>Total ganho com diárias: R$ ${totalDiarias.toFixed(2)}</p>
-<p>Total de gastos: R$ ${totalGastos.toFixed(2)}</p>
-<p><strong>Lucro do mês: R$ ${lucro.toFixed(2)}</strong></p>
-`;
-
-
-let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
-
-let total = 0;
-
-gastos.forEach(g => {
-    total += Number(g.valor);
-});
-
-document.getElementById("totalGastos").innerText =
-    "Total de gastos: R$ " + total.toFixed(2);
-let mesAtual = new Date().toISOString().slice(0,7);
-let diariasMes = diarias.filter(d => d.data.startsWith(mesAtual));
-
-document.body.innerHTML += `
-<p>Diárias neste mês: ${diariasMes.length}</p>
-`;
-1
+<style>
 @media print {
     button {
         display: none;
     }
 }
+</style>
+</head>
 
-function gerarPDF() {
-    window.print();
-}
+<body>
+
+<h1>📊 Relatório Mensal</h1>
+
+<div id="resumo"></div>
+<div id="lista"></div>
+
+<button onclick="gerarPDF()">📄 Gerar PDF</button>
 <button onclick="logout()">Sair</button>
+<br><br>
 
+<a href="dashboard.html"><button>⬅ Voltar</button></a>
 
-function logout() {
-    localStorage.removeItem("logado");
-    window.location.href = "login.html";
-}
+<script>
+const diarias = JSON.parse(localStorage.getItem("diarias")) || [];
+const gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
+let totalDiarias = 0;
+let totalGastos = 0;
 
+diarias.forEach(d => totalDiarias += Number(d.valor));
+gastos.forEach(g => totalGastos += Number(g.valor));
+
+document.getElementById("resumo").innerHTML = `
+    <p>🧹 Diárias realizadas: ${diarias.length}</p>
+    <p>💰 Total ganho: R$ ${totalDiarias.toFixed(2)}</p>
+    <p>📉 Gastos: R$ ${totalGastos.toFixed(2)}</p>
+    <p>📈 Lucro: R$ ${(totalDiarias - totalGastos).toFixed(2)}</p>
+`;
+
+let html = "<h3>📋 Detalhamento</h3>";
+
+diarias.forEach(d => {
+    html += `
+        <div class="diaria">
+            📅 ${d.data}<br>
+            ⏰ ${d.horario}<br>
+            👤 ${d.cliente}<br>
+            💰 R$ ${d.valor}
+        </div>
+        <hr>
+    `;
+});
+
+document.getElementById("lista").innerHTML = html;
 
 </script>
+
 
 </body>
 </html>

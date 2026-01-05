@@ -80,7 +80,6 @@ button {
 <a href="dashboard.html"><button>⬅ Voltar</button></a>
 
 <script>
-
 const calendario = document.getElementById("calendario");
 const mesAno = document.getElementById("mesAno");
 const lista = document.getElementById("lista");
@@ -98,7 +97,7 @@ mesAno.innerText = hoje.toLocaleDateString("pt-BR", {
 
 const ultimoDia = new Date(ano, mes + 1, 0).getDate();
 
-// ================= CALENDÁRIO =================
+// ===== MONTAR CALENDÁRIO =====
 for (let dia = 1; dia <= ultimoDia; dia++) {
     const dataStr = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
 
@@ -115,51 +114,59 @@ for (let dia = 1; dia <= ultimoDia; dia++) {
     }
 
     div.onclick = () => mostrarDiarias(dataStr);
-
     calendario.appendChild(div);
 }
 
-// ================= MOSTRAR DIÁRIAS =================
+// ===== MOSTRAR DIÁRIAS DO DIA =====
 function mostrarDiarias(data) {
     lista.innerHTML = `<h3>Diárias de ${data}</h3>`;
 
-    const doDia = diarias.filter(d => d.data === data);
+    const doDia = diarias
+        .filter(d => d.data === data)
+        .sort((a, b) => a.horario.localeCompare(b.horario));
 
     if (doDia.length === 0) {
         lista.innerHTML += "<p>Nenhuma diária nesse dia.</p>";
         return;
     }
 
-   doDia.sort((a, b) => a.horario.localeCompare(b.horario));
-forEach((d, index) => {
+    doDia.forEach((d, index) => {
         lista.innerHTML += `
         <div class="diaria">
-            ⏰ ${d.horario}<br>
+            ⏰ <strong>${d.horario}</strong><br>
             👤 ${d.cliente}<br>
             📍 ${d.endereco}<br>
             💰 R$ ${d.valor}<br>
 
-            <button onclick="editarDiaria('${data}', '${d.horario}')">✏️ Editar</button>
-            <button onclick="excluirDiaria('${data}', '${d.horario}')">❌ Excluir</button>
+            <button onclick="editarDiaria(${index}, '${data}')">✏️ Editar</button>
+            <button onclick="excluirDiaria(${index}, '${data}')">❌ Excluir</button>
         </div>
         `;
     });
 }
 
-// ================= EXCLUIR =================
-function excluirDiaria(data, horario) {
+// ===== EXCLUIR =====
+function excluirDiaria(index, data) {
     if (!confirm("Deseja excluir esta diária?")) return;
 
-    diarias = diarias.filter(d => !(d.data === data && d.horario === horario));
+    const filtradas = diarias.filter(d => d.data === data);
+    const diariaExcluir = filtradas[index];
+
+    diarias = diarias.filter(d => d !== diariaExcluir);
     localStorage.setItem("diarias", JSON.stringify(diarias));
+
     location.reload();
 }
 
-// ================= EDITAR =================
-function editarDiaria(data, horario) {
+// ===== EDITAR =====
+function editarDiaria(index, data) {
     localStorage.setItem("editarData", data);
-    localStorage.setItem("editarHorario", horario);
+    localStorage.setItem("editarIndex", index);
     window.location.href = "nova-diaria.html";
+}
+function logout() {
+    localStorage.removeItem("logado");
+    window.location.href = "login.html";
 }
 
 </script>
