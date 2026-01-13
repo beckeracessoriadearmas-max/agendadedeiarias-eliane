@@ -1,91 +1,16 @@
-// 🔐 PROTEÇÃO DE LOGIN
-if (localStorage.getItem("logado") !== "true") {
-    window.location.href = "login.html";
-}
-
-// 🔔 NOTIFICAÇÕES
-if ("Notification" in window) {
-    Notification.requestPermission();
-}
-
-// 📦 SERVICE WORKER
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-        .then(() => console.log("Service Worker registrado"));
-}
-
-// 📊 RESUMO MENSAL
 const diarias = JSON.parse(localStorage.getItem("diarias")) || [];
+const gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
-const hoje = new Date();
-const mesAtual = hoje.getMonth();
-const anoAtual = hoje.getFullYear();
+const mesAtual = new Date().toISOString().slice(0,7);
 
-let feitas = 0;
-let futuras = 0;
-let total = 0;
+const diariasMes = diarias.filter(d => d.data.startsWith(mesAtual));
+const gastosMes = gastos.filter(g => g.data.startsWith(mesAtual));
 
-diarias.forEach(d => {
-    const dataHora = new Date(`${d.data}T${d.horario}`);
-    if (
-        dataHora.getMonth() === mesAtual &&
-        dataHora.getFullYear() === anoAtual
-    ) {
-        total += Number(d.valor);
-        if (dataHora < hoje) {
-            feitas++;
-        } else {
-            futuras++;
-        }
-    }
-});
+const totalDiarias = diariasMes.reduce((s, d) => s + Number(d.valor), 0);
+const totalGastos = gastosMes.reduce((s, g) => s + Number(g.valor), 0);
 
-// 🖥️ MOSTRAR NA TELA
-document.getElementById("feitas").innerText =
-    `Diárias feitas no mês: ${feitas}`;
-
-document.getElementById("futuras").innerText =
-    `Diárias restantes: ${futuras}`;
-
-document.getElementById("total").innerText =
-    `Total ganho: R$ ${total.toFixed(2)}`;
-
-// 🚪 LOGOUT
-function logout() {
-    localStorage.removeItem("logado");
-    window.location.href = "login.html";
-}
-function logout() {
-    localStorage.removeItem("logado");
-    window.location.href = "index.html";
-}
-
-const diarias = JSON.parse(localStorage.getItem("diarias")) || [];
-
-const hoje = new Date();
-const mesAtual = hoje.getMonth();
-const anoAtual = hoje.getFullYear();
-
-// Filtra apenas diárias do mês atual
-const diariasMes = diarias.filter(d => {
-    const data = new Date(d.data);
-    return (
-        data.getMonth() === mesAtual &&
-        data.getFullYear() === anoAtual
-    );
-});
-
-// Total de diárias
-document.getElementById("totalDiarias").innerText = diariasMes.length;
-
-// Soma dos valores
-let total = 0;
-diariasMes.forEach(d => {
-    total += Number(d.valor);
-});
-
-document.getElementById("totalGanho").innerText =
-    total.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
+document.getElementById("qtdDiarias").innerText = diariasMes.length;
+document.getElementById("totalGanho").innerText = "R$ " + totalDiarias.toFixed(2);
+document.getElementById("totalGastos").innerText = "R$ " + totalGastos.toFixed(2);
+document.getElementById("lucro").innerText =
+  "R$ " + (totalDiarias - totalGastos).toFixed(2);

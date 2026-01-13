@@ -2,19 +2,9 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Agenda da Eliane</title>
-<link rel="stylesheet" href="estilo.css">
-
-<script>
-if (localStorage.getItem("logado") !== "true") {
-    window.location.href = "login.html";
-}
-</script>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff69b4">
+<title>Dashboard</title>
+<link rel="stylesheet" href="css/estilo.css">
 </head>
-
 <body>
 
 <nav class="menu">
@@ -26,64 +16,14 @@ if (localStorage.getItem("logado") !== "true") {
   <a href="#" onclick="logout()">🚪 Sair</a>
 </nav>
 
-<h1>📋 Dashboard</h1>
+<h1>Resumo do Mês</h1>
 
-<div class="cards">
+<p>🧹 Diárias: <strong id="qtdDiarias"></strong></p>
+<p>💰 Ganhos: <strong id="totalGanho"></strong></p>
+<p>📉 Gastos: <strong id="totalGastos"></strong></p>
+<p>📈 Lucro: <strong id="lucro"></strong></p>
 
-  <div class="card">
-    <h3>🧹 Diárias no mês</h3>
-    <p id="qtdDiarias">0</p>
-  </div>
-
-  <div class="card">
-    <h3>💰 Total ganho</h3>
-    <p id="totalGanho">R$ 0,00</p>
-  </div>
-
-  <div class="card">
-    <h3>📉 Gastos</h3>
-    <p id="totalGastos">R$ 0,00</p>
-  </div>
-
-  <div class="card destaque">
-    <h3>📈 Lucro</h3>
-    <p id="lucro">R$ 0,00</p>
-  </div>
-
-</div>
-
-<script>
-// ===== CARREGAR DADOS =====
-const diarias = JSON.parse(localStorage.getItem("diarias")) || [];
-const gastos = JSON.parse(localStorage.getItem("gastos")) || [];
-
-// ===== MÊS ATUAL =====
-const mesAtual = new Date().toISOString().slice(0,7);
-
-// ===== FILTRAR DIÁRIAS DO MÊS =====
-const diariasMes = diarias.filter(d => d.data.startsWith(mesAtual));
-
-// ===== CALCULAR TOTAIS =====
-let totalGanho = 0;
-let totalGastos = 0;
-
-diariasMes.forEach(d => totalGanho += Number(d.valor));
-gastos.forEach(g => totalGastos += Number(g.valor));
-
-const lucro = totalGanho - totalGastos;
-
-// ===== ATUALIZAR TELA =====
-document.getElementById("qtdDiarias").innerText = diariasMes.length;
-document.getElementById("totalGanho").innerText = `R$ ${totalGanho.toFixed(2)}`;
-document.getElementById("totalGastos").innerText = `R$ ${totalGastos.toFixed(2)}`;
-document.getElementById("lucro").innerText = `R$ ${lucro.toFixed(2)}`;
-
-// ===== LOGOUT =====
-function logout() {
-    localStorage.removeItem("logado");
-    window.location.href = "login.html";
-}
-</script>
-
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>

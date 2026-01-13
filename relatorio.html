@@ -3,65 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <title>Relatório</title>
-<link rel="stylesheet" href="estilo.css">
-
-<style>
-@media print {
-    button {
-        display: none;
-    }
-}
-</style>
+<link rel="stylesheet" href="css/estilo.css">
 </head>
-
 <body>
 
-<h1>📊 Relatório Mensal</h1>
+<nav class="menu">
+  <a href="dashboard.html">🏠 Início</a>
+  <a href="#" onclick="logout()">🚪 Sair</a>
+</nav>
+
+<h1>Relatório Mensal</h1>
 
 <div id="resumo"></div>
 <div id="lista"></div>
 
-<button onclick="gerarPDF()">📄 Gerar PDF</button>
-<button onclick="logout()">Sair</button>
-<br><br>
-
-<a href="dashboard.html"><button>⬅ Voltar</button></a>
-
+<script src="js/auth.js"></script>
 <script>
 const diarias = JSON.parse(localStorage.getItem("diarias")) || [];
 const gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
-let totalDiarias = 0;
-let totalGastos = 0;
+let ganho = diarias.reduce((s,d)=>s+Number(d.valor),0);
+let gasto = gastos.reduce((s,g)=>s+Number(g.valor),0);
 
-diarias.forEach(d => totalDiarias += Number(d.valor));
-gastos.forEach(g => totalGastos += Number(g.valor));
-
-document.getElementById("resumo").innerHTML = `
-    <p>🧹 Diárias realizadas: ${diarias.length}</p>
-    <p>💰 Total ganho: R$ ${totalDiarias.toFixed(2)}</p>
-    <p>📉 Gastos: R$ ${totalGastos.toFixed(2)}</p>
-    <p>📈 Lucro: R$ ${(totalDiarias - totalGastos).toFixed(2)}</p>
+resumo.innerHTML = `
+<p>💰 Ganhos: R$ ${ganho.toFixed(2)}</p>
+<p>📉 Gastos: R$ ${gasto.toFixed(2)}</p>
+<p>📈 Lucro: R$ ${(ganho-gasto).toFixed(2)}</p>
 `;
 
-let html = "<h3>📋 Detalhamento</h3>";
-
-diarias.forEach(d => {
-    html += `
-        <div class="diaria">
-            📅 ${d.data}<br>
-            ⏰ ${d.horario}<br>
-            👤 ${d.cliente}<br>
-            💰 R$ ${d.valor}
-        </div>
-        <hr>
-    `;
+diarias.forEach(d=>{
+  lista.innerHTML += `
+  <p>📅 ${d.data} ⏰ ${d.horario} - 💰 R$ ${d.valor}</p>
+  `;
 });
-
-document.getElementById("lista").innerHTML = html;
-
 </script>
-
-
 </body>
 </html>

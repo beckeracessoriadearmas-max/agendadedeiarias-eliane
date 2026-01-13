@@ -1,113 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Nova Diária</title>
-    <link rel="stylesheet" href="estilo.css">
-	<script>
-if (localStorage.getItem("logado") !== "true") {
-    window.location.href = "login.html";
-}
-</script>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff69b4">
-
+<meta charset="UTF-8">
+<title>Nova Diária</title>
+<link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 
+<nav class="menu">
+  <a href="dashboard.html">🏠 Início</a>
+  <a href="calendario.html">📅 Calendário</a>
+  <a href="#" onclick="logout()">🚪 Sair</a>
+</nav>
+
 <h1>Nova Diária</h1>
 
-<form>
+<label>Data</label>
+<input type="date" id="data">
 
-    <label>Data:</label><br>
-    <input type="date" id="data"><br><br>
+<label>Horário</label>
+<input type="time" id="horario">
 
-    <label>Horário:</label><br>
-    <input type="time" id="horario"><br><br>
+<label>Cliente</label>
+<input type="text" id="cliente">
 
-    <label>Cliente:</label><br>
-    <input type="text" id="cliente"><br><br>
+<label>Endereço</label>
+<input type="text" id="endereco">
 
-    <label>Endereço:</label><br>
-    <input type="text" id="endereco"><br><br>
+<label>Valor</label>
+<input type="number" id="valor">
 
-    <label>Valor da diária:</label><br>
-    <input type="number" id="valor"><br><br>
+<button onclick="salvarDiaria()">Salvar</button>
 
-    <button type="button" onclick="salvarDiaria()">Salvar</button>
-
-    <a href="dashboard.html">
-        <button type="button">Voltar</button>
-    </a>
-
-    <button type="button" onclick="logout()">Sair</button>
-
-</form>
-
-<script>
-// ================= LOGOUT =================
-function logout() {
-    localStorage.removeItem("logado");
-    window.location.href = "login.html";
-}
-
-// ============ PERMISSÃO NOTIFICAÇÃO ============
-if ("Notification" in window) {
-    Notification.requestPermission();
-}
-
-// ============ AGENDAR NOTIFICAÇÃO ============
-function agendarNotificacao(mensagem, dataHora) {
-    const agora = new Date().getTime();
-    const horario = new Date(dataHora).getTime();
-    const tempo = horario - agora;
-
-    if (tempo > 0) {
-        setTimeout(() => {
-            new Notification("Agenda da Elaine 💕", {
-                body: mensagem
-            });
-        }, tempo);
-    }
-}
-
-// ============ SALVAR DIÁRIA ============
-function salvarDiaria() {
-    let data = document.getElementById("data").value;
-    let horario = document.getElementById("horario").value;
-    let cliente = document.getElementById("cliente").value;
-    let endereco = document.getElementById("endereco").value;
-    let valor = document.getElementById("valor").value;
-
-    if (!data || !horario || !cliente || !valor) {
-        alert("Preencha os campos obrigatórios!");
-        return;
-    }
-
-    let diarias = JSON.parse(localStorage.getItem("diarias")) || [];
-
-    let conflito = diarias.some(d =>
-        d.data === data && d.horario === horario
-    );
-
-    if (conflito) {
-        alert("⚠️ Já existe uma diária nesse horário!");
-        return;
-    }
-
-    diarias.push({ data, horario, cliente, endereco, valor });
-    localStorage.setItem("diarias", JSON.stringify(diarias));
-
-    // 🔔 Agendar notificação
-    const dataHora = `${data}T${horario}`;
-    agendarNotificacao(
-        `Hora de ir para a diária em ${endereco}`,
-        dataHora
-    );
-
-    alert("✅ Diária salva com notificação!");
-}
-</script>
-
+<script src="js/auth.js"></script>
+<script src="js/diarias.js"></script>
 </body>
 </html>
